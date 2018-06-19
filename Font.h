@@ -9,13 +9,6 @@ public:
   inline const std::string& getFileName() const { return m_filename; }
   inline float getFontSize() const { return m_size; }
 
-  Vector2 getOffsets(const std::string& text) const;
-  float getWidth(const std::string& text) const;
-  float getHeight(const std::string& text) const;
-  Vector2 getSize(const std::string& text) const;
-
-  Rect getBounds(const std::string& text) const;
-
   Texture* getTexture() const;
 
   inline Uint getID() const { return m_FTAtlas->id; }
