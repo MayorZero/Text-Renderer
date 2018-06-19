@@ -11,9 +11,9 @@ GLTexture::~GLTexture()
   Free();
 }
 
-MiUint GLTexture::LoadFromFile()
+Uint GLTexture::LoadFromFile()
 {
-  MiUint tex = 0;
+  Uint tex = 0;
 
   glCall(glGenTextures(1, &tex));
   glCall(glBindTexture(GL_TEXTURE_2D, tex));
