@@ -19,5 +19,5 @@ Texture* Font::getTexture() const
 
 void Font::UpdateAtlas() const
 {
-  m_texture->setData(FTAtlas->data);
+  m_texture->setData(m_FTAtlas->data);
 }
