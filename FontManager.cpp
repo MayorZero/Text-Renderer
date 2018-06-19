@@ -1,4 +1,4 @@
-std::vector<std::unique_ptr<Font>> FontManager::font;
+std::vector<std::unique_ptr<Font>> FontManager::m_font;
 
 FontManager::~FontManager()
 {
@@ -13,17 +13,17 @@ FontManager& FontManager::getInstance()
 
 void FontManager::Add(Font* font)
 {
-	this->font.push_back(std::unique_ptr<Font>(font));
+	m_font.push_back(std::unique_ptr<Font>(font));
 }
 
 Font* FontManager::Get()
 {
-	return font[0].get();
+	return m_font[0].get();
 }
 
 Font* FontManager::Get(const std::string& name)
 {
-	for (const auto& font : font) {
+	for (const auto& font : m_font) {
 		if (font->getName() == name) {
 			return font.get();
 		}
@@ -34,7 +34,7 @@ Font* FontManager::Get(const std::string& name)
 
 Font* FontManager::Get(Uint size)
 {
-	for (const auto& font : font) {
+	for (const auto& font : m_font) {
 		if (font->getFontSize() == size) {
 			return font.get();
 		}
@@ -45,7 +45,7 @@ Font* FontManager::Get(Uint size)
 
 Font* FontManager::Get(const std::string& name, Uint size)
 {
-	for (const auto& font : font) {
+	for (const auto& font : m_font) {
 		if (font->getFontSize() == size && font->getName() == name) {
 			return font.get();
 		}
@@ -55,5 +55,5 @@ Font* FontManager::Get(const std::string& name, Uint size)
 
 void FontManager::Free()
 {
-	font.clear();
+	m_font.clear();
 }
