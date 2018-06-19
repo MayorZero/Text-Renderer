@@ -17,15 +17,21 @@ void Renderer2D::Create(Window* window)
   int w = 0,
       h = 0;
   window->getWindowSize(&w, &h);
+  //Set ortho projection
   m_camera.Projection(0.0f, (float)w, 0.0f, (float)h);
 
+  //Create vao
   m_vao = std::unique_ptr<API::VertexArray>(m_vao->Create());
+  //Create vbo and ebo
   m_vbo = std::unique_ptr<API::Buffer>(m_vbo->Create(API::BUFFER::ARRAY, API::DRAW::DYNAMIC));
   m_ebo = std::unique_ptr<API::Buffer>(m_ebo->Create(API::BUFFER::ELEMENT, API::DRAW::STATIC));
 
+  //Add nothing to vbo
   m_vbo->AddData(BUFFER_SIZE::VERTEX, nullptr);
+  //add indices to ebo
   m_ebo->AddData(BUFFER_SIZE::ELEMENT, setIndices());
 
+  //Set attributes
   m_vbo->AddAttribute(SHADER_OUT::POSITION, 2, GL_FLOAT,         GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, position));
   m_vbo->AddAttribute(SHADER_OUT::COLOR,    4, GL_UNSIGNED_BYTE, GL_TRUE,  sizeof(Vertex), (const void*)offsetof(Vertex, color));
   m_vbo->AddAttribute(SHADER_OUT::UV,       2, GL_FLOAT,         GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, uv));
@@ -36,18 +42,21 @@ void Renderer2D::Create(Window* window)
 
 void Renderer2D::Begin()
 {
+  //Add projection (MVP) to shader 
   glm::mat4 cameraMatrix = glm::mat4(1.0f);
   cameraMatrix = camera.getCameraMatrix();
   glUniformMatrix4fv(1, 1, GL_FALSE, &(cameraMatrix[0][0]));
 
   camera.Update();
+  //Map buffer
   mappedVertex = vbo->getDataPointer<Vertex>();
 }
 
 void Renderer2D::DrawString(const std::string& text, const Vector2& position, Uint color, const Font& font)
 {
   Texture* texture = font.getTexture();
-  float textureSlot = FindTexture(texture);
+  //Find texture slot
+  float textureSlot = SummitTexture(texture);
 
   const Vector2& scale = 1.0f;// font.getScale();
 
@@ -62,7 +71,7 @@ void Renderer2D::DrawString(const std::string& text, const Vector2& position, Ui
         float kerning = texture_glyph_get_kerning(glyph, text.c_str() + i - 1);
         x += kerning / scale.x;
       }
-
+      //Set position and tex coords
       float x0 = x + glyph->offset_x / scale.x;
       float y0 = position.y + glyph->offset_y / scale.y;
       float x1 = x0 + glyph->width / scale.x;
@@ -73,6 +82,7 @@ void Renderer2D::DrawString(const std::string& text, const Vector2& position, Ui
       float u1 = glyph->s1;
       float v1 = glyph->t1;
 
+      //Add data to mapped buffer
       m_buffer->position = Vector3(x0, y0, 0);
       m_buffer->uv = Vector2(u0, v0);
       m_buffer->texID = textureSlot;
@@ -97,6 +107,7 @@ void Renderer2D::DrawString(const std::string& text, const Vector2& position, Ui
       m_buffer->color = color;
       m_buffer++;
 
+      //Add 6 indices for each text
       m_indexCount += 6;
 
       x += glyph->advance_x;
@@ -106,8 +117,10 @@ void Renderer2D::DrawString(const std::string& text, const Vector2& position, Ui
 
 void Renderer2D::End()
 {
+  //Unmap buffer
   vbo->releaseDataPointer();
 
+  //Enable blend
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -116,27 +129,33 @@ void Renderer2D::Present()
 {
   End();
 
+  //Bind Texture
   for (Uint i = 0; i < m_texture.size(); ++i) {
    m_texture[i]->BindTexture(i);
   }
 
+  //Bind and Draw elements
   m_vao->BindVertexArray();
   m_vao->DrawElements(API::ELEMENTS, indexCount);
   m_vao->UnbindVertexArray();
 
+  //Unmap texture
   for (Uint i = 0; i < m_texture.size(); ++i) {
     m_texture[i]->UnbindTexture(i);
   }
 
+  //Reset index count and textures
   m_indexCount = 0;
   m_texture.clear();
 
+  //Disable blend
   glDisable(GL_BLEND);
 }
 
 Uint* Renderer2D::setIndices()
 {
-  Uint* indices = new MiUint[BUFFER_SIZE::ELEMENT],
+  //Set indices for 60k sprites
+  Uint* indices = new Uint[BUFFER_SIZE::ELEMENT],
         offset = 0;
   for (int i = 0; i < BUFFER_SIZE::ELEMENT; i += 6) {
     indices[i] = offset;
@@ -154,6 +173,7 @@ Uint* Renderer2D::setIndices()
 
 float Renderer2D::SummitTexture(Texture* t)
 {
+  //Find Texture
   float result = 0.0f;
   bool found = false;
   for (Uint i = 0; i < m_texture.size(); ++i) {
