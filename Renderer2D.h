@@ -46,5 +46,5 @@ private:
 
   Uint* setIndices();
   void End();
-  float FindTexture(Texture* texture);
+  float SummitTexture(Texture* texture);
 };
