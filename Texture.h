@@ -33,7 +33,7 @@ public:
 
 private:		
   std::string filePath;
-  Uint texture = 0;
+  Uint m_texture = 0;
 
   Uint LoadFromFile();
 };
