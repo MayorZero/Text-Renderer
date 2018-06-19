@@ -7,5 +7,5 @@ public:
   void Draw();
   
 private:
-  Renderer2D renderer;
+  Renderer2D* m_renderer;
 };
