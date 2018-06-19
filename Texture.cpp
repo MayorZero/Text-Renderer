@@ -1,4 +1,4 @@
-GLTexture::GLTexture(MiUint width, MiUint height)
+GLTexture::GLTexture(Uint width, Uint height)
 {
   w = width;
   h = height;
