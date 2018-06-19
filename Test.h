@@ -8,4 +8,5 @@ public:
   
 private:
   Renderer2D* m_renderer;
+  Label* m_label;
 };
