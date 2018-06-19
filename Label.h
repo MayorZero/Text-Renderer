@@ -14,6 +14,16 @@ public:
 	inline const Font& getFont() const { return *m_font; }
 	inline Alignment getAlignment() const { return m_alignment; }
 	inline const std::string& getText() const { return m_text; }
+	
+	struct
+	{
+		Vector2 position = 0.0f,
+			    size = 0.0f;
+		Rect uvRect;
+		MiUint color = 0xffffffff;
+
+		std::unique_ptr<Texture> tex = nullptr;
+	} Data;
 private:
 	void UpdateBounds();
 
