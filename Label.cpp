@@ -16,7 +16,7 @@ void Label::Draw(Renderer2D* renderer) const
 
 void Label::SetAlignment(Alignment alignment)
 {
-  alignment = alignment;
+  m_alignment = alignment;
   UpdateBounds();
 }
 
