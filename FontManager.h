@@ -14,5 +14,5 @@ public:
 private:
   FontManager() {}
 
-  static std::vector<std::unique_ptr<Font>> font;
+  static std::vector<std::unique_ptr<Font>> m_font;
 };
